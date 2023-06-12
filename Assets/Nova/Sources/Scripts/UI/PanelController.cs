@@ -99,7 +99,7 @@ namespace Nova
 
         protected virtual void Start()
         {
-            var parent = transform.parent.GetComponentInParent<PanelController>(true);
+            var parent = transform.parent.GetComponentInParent<PanelController>();
             if (parent != null)
             {
                 // Let the parent init layout for this
