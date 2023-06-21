@@ -1,3 +1,6 @@
+## 开发说明
+这个仓库除了master以外的分支还在开发中,完全不能保证一定能跑起来
+
 # Nova（能叶）
 
 ![Nova banner](https://github.com/Lunatic-Works/Nova/wiki/img/nova_banner.png)

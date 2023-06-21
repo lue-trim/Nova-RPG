@@ -26,3 +26,4 @@ require 'variables'
 require 'video'
 
 require 'animation_presets'
+require 'rpg_scripts'
