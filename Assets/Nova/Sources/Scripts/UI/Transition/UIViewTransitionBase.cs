@@ -105,6 +105,10 @@ namespace Nova
         protected void SetToTransitionTarget()
         {
             rectTransform.position = pos0;
+            Vector3 localPosition = rectTransform.localPosition;
+            localPosition.z = 0f;
+            rectTransform.localPosition = localPosition;
+
             Vector3 scale = size0.InverseScale(rectTransform.rect.size);
             scale.x *= scale0.x;
             scale.y *= scale0.y;
