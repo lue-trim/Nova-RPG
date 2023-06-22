@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,59 +10,200 @@ public class PlayerMovement : MonoBehaviour
     private float speed;
     [SerializeField]
     private Animator animator;
+    [SerializeField]
+    private GameObject tilemapsGameObject;
 
-    public void Move(InputAction.CallbackContext ctx)
+    private TilemapCollider2D[] tilemap_cols;
+
+    // 移动已持续时间
+    private float moveTime = 0f;
+    // 是否接收到移动信号
+    private bool is_moving = true;
+    // 是否撞到了东西
+    private bool is_collision = false;
+    // 接收到的移动信号值
+    private Vector2 moveValue = new Vector2(0, 0);
+    // 移动方向
+    private Vector2Int moveDirection = new Vector2Int(0, 0);
+    // 应该停下来的位置
+    private Vector3 stopMovingPosition = new Vector3();
+    // 上一个应该停下来的位置
+    private Vector3 lastStopMovingPosition = new Vector3();
+
+    private Vector3 GetStopMovingPos(Vector3 current_pos, Vector2Int moveDirection)
     {
-        var moveValue = ctx.ReadValue<Vector2>(); //input system的callback
-        var v = new Vector2(0f, 0f); //速度
+        float new_pos_x, new_pos_y;
 
         // 横向
-        int direction_x;
-        if (moveValue.x < 0)
-        {
-            //往左走
-            v.x = -speed;
-            direction_x = -1;
-        }
-        else if (moveValue.x > 0)
-        {
-            //往右走
-            v.x = speed;
-            direction_x = 1;
-        }
-        else
-        {
-            //横向不动
-            v.x = 0;
-            direction_x = 0;
-        }
+        new_pos_x = Mathf.Round(current_pos.x + moveDirection.x);
 
         // 纵向
-        int direction_y;
-        if (moveValue.y < 0)
+        new_pos_y = Mathf.Round(current_pos.y + moveDirection.y);
+        /*//横向
+        if (moveDirection.x > 0)
         {
-            //往下走
-            v.y = -speed;
-            direction_y = -1;
+            new_pos_x = Mathf.Ceil(current_pos.x + moveDirection.x) + 0.5f;
+            //Debug.Log(current_pos.ToString() + moveDirection.ToString());
         }
-        else if (moveValue.y > 0)
+        else if (moveDirection.x < 0)
         {
-            //往上走
-            v.y = speed;
-            direction_y = 1;
+            new_pos_x = Mathf.Floor(current_pos.x + moveDirection.x) + 0.5f;
         }
         else
         {
-            //纵向不动
-            v.y = 0;
-            direction_y = 0;
+            new_pos_x = Mathf.Round(current_pos.x);
+        }
+        //纵向
+        if (moveDirection.y > 0)
+        {
+            new_pos_y = Mathf.Ceil(current_pos.y + moveDirection.y) + 0.5f;
+        }
+        else if (moveDirection.y < 0)
+        {
+            new_pos_y = Mathf.Floor(current_pos.y + moveDirection.y) + 0.5f;
+        }
+        else
+        {
+            new_pos_y = Mathf.Round(current_pos.y);
+        }*/
+
+        var new_pos = new Vector3(new_pos_x, new_pos_y, current_pos.z);
+        return new_pos;
+    }
+    private Vector3 MoveTowards()
+    {
+
+        float time = 1f / speed;
+        moveTime += Time.deltaTime;
+        // 设new_x=a(x-time)^2+stop_pos,其中a=(last_pos-stop_pos)/time^2
+        var new_pos_x = -moveDirection.x / Mathf.Pow(time, 2f) * Mathf.Pow(moveTime - time, 2f) + stopMovingPosition.x + moveDirection.x;
+        var new_pos_y = -moveDirection.y / Mathf.Pow(time, 2f) * Mathf.Pow(moveTime - time, 2f) + stopMovingPosition.y + moveDirection.y;
+        var new_pos = new Vector3(new_pos_x, new_pos_y, transform.position.z);
+
+        if (moveTime >= time)
+        {
+            moveTime = 0;
+            return stopMovingPosition;
+        }
+        else
+        {
+            return new_pos;
+        }
+    }
+    private bool IsHaveCol(Vector3 pos)
+    {
+        foreach (var tilemap_col in tilemap_cols)
+        {
+            Tilemap tilemap = tilemap_col.gameObject.GetComponent<Tilemap>();
+            var new_x = Mathf.RoundToInt(pos.x);
+            var new_y = Mathf.RoundToInt(pos.y);
+            var new_z = Mathf.RoundToInt(pos.z);
+            var col_type = tilemap.GetColliderType(new Vector3Int(new_x, new_y, new_z));
+            if (col_type != Tile.ColliderType.None)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void Awake()
+    {
+        stopMovingPosition = transform.position;
+        tilemap_cols = tilemapsGameObject.GetComponentsInChildren<TilemapCollider2D>();
+    }
+    private void Update()
+    {
+        if (IsHaveCol(stopMovingPosition))
+        //if (is_collision)
+        {
+            stopMovingPosition = lastStopMovingPosition;
+            transform.position = lastStopMovingPosition;
+            is_collision = false;
+            return;
         }
 
+        // 实现移动
+        //transform.position = MoveTowards();
+        if (transform.position != stopMovingPosition)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, stopMovingPosition, speed * Time.deltaTime);
+        }
+        else if (is_moving)
+        {
+            lastStopMovingPosition = transform.position;
+            //Debug.Log("Updated lastpos to " + lastStopMovingPosition.ToString());
+        }
+
+        // 更新移动目标
+        if (is_moving && !is_collision)
+        {
+            var new_moving_pos = GetStopMovingPos(transform.position, moveDirection);
+            if (IsHaveCol(new_moving_pos))
+            {
+                return;
+            }
+            if (stopMovingPosition != new_moving_pos)
+            {
+                lastStopMovingPosition = stopMovingPosition;
+                stopMovingPosition = new_moving_pos;
+                moveTime = 0;
+            }
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //stopMovingPosition = lastStopMovingPosition;
+        Debug.Log("Updated stoppos to " + stopMovingPosition.ToString());
+        is_collision = true;
+    }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        is_collision = true;
+    }
+    public void Move(InputAction.CallbackContext ctx)
+    {
+        moveValue = ctx.ReadValue<Vector2>(); //input system的callback
+        var v = new Vector2(0f, 0f); //速度
+
+        // 检测移动方向
+        moveDirection.x = moveValue.x > 0 ? 1 : (moveValue.x < 0 ? -1 : 0);
+        moveDirection.y = moveValue.y > 0 ? 1 : (moveValue.y < 0 ? -1 : 0);
+
+        // 设置初始移动目标点
+        if (!is_moving)
+        {
+            var current_pos = transform.position;
+            lastStopMovingPosition = current_pos;
+        }
+
+        // 检测是否停止移动
+        is_moving = !(moveValue == new Vector2(0, 0));
+        if (is_moving)
+        {
+            moveTime = 0;
+        }
+        /*
+        if (is_moving)
+        {
+            v.x = moveDirection.x * speed;
+            v.y = moveDirection.y * speed;
+            //activeMoveDirection = moveDirection;
+        }
+        else
+        {
+            var current_pos = transform.position;
+            //stopMovingPosition = GetStopMovingPos(current_pos, activeMoveDirection);
+            //Debug.Log(stopMovingPosition);
+        }
+        */
+
         // 设置动画状态
-        animator.SetInteger("DirectionX", direction_x);
-        animator.SetInteger("DirectionY", direction_y);
+        animator.SetInteger("DirectionX", moveDirection.x);
+        animator.SetInteger("DirectionY", moveDirection.y);
 
         // 设置移动速度
-        gameObject.GetComponent<Rigidbody2D>().velocity = v;
+        //gameObject.GetComponent<Rigidbody2D>().velocity = v;
+        //Debug.Log(stopMovingPosition.ToString() + lastStopMovingPosition.ToString());
     }
 }
