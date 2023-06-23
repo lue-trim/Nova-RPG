@@ -12,6 +12,7 @@ TagManager:
   - Avatar
   - Map
   - NPC
+  - Event
   layers:
   - Default
   - TransparentFX

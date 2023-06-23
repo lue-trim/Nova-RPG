@@ -6,21 +6,22 @@ using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField] // 移动速度
     private float speed;
-    [SerializeField]
+    [SerializeField] // 动画状态机
     private Animator animator;
-    [SerializeField]
-    private GameObject tilemapsGameObject;
+    [SerializeField] // 碰撞体
+    private BoxCollider2D collider;
+    // 当前地图
+    public GameObject tilemapsGameObject;
 
     private TilemapCollider2D[] tilemap_cols;
+    private GameObject[] events;
 
     // 移动已持续时间
     private float moveTime = 0f;
     // 是否接收到移动信号
     private bool is_moving = true;
-    // 是否撞到了东西
-    private bool is_collision = false;
     // 接收到的移动信号值
     private Vector2 moveValue = new Vector2(0, 0);
     // 移动方向
@@ -92,14 +93,24 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool IsHaveCol(Vector3 pos)
     {
+        // 寻找对应点位有没有地图碰撞体
         foreach (var tilemap_col in tilemap_cols)
         {
-            Tilemap tilemap = tilemap_col.gameObject.GetComponent<Tilemap>();
+            var tilemap = tilemap_col.gameObject.GetComponent<Tilemap>();
             var new_x = Mathf.RoundToInt(pos.x);
             var new_y = Mathf.RoundToInt(pos.y);
             var new_z = Mathf.RoundToInt(pos.z);
             var col_type = tilemap.GetColliderType(new Vector3Int(new_x, new_y, new_z));
             if (col_type != Tile.ColliderType.None)
+            {
+                return true;
+            }
+        }
+
+        // 寻找对应点位有没有NPC
+        foreach (var eventObject in events)
+        {
+            if (pos == eventObject.transform.position)
             {
                 return true;
             }
@@ -110,16 +121,29 @@ public class PlayerMovement : MonoBehaviour
     {
         stopMovingPosition = transform.position;
         tilemap_cols = tilemapsGameObject.GetComponentsInChildren<TilemapCollider2D>();
+        events = GameObject.FindGameObjectsWithTag("Event");
     }
     private void Update()
     {
         if (IsHaveCol(stopMovingPosition))
-        //if (is_collision)
         {
             stopMovingPosition = lastStopMovingPosition;
             transform.position = lastStopMovingPosition;
-            is_collision = false;
             return;
+        }
+
+        // 设置碰撞触发区域
+        //if (transform.position == stopMovingPosition)
+        if (is_moving)
+        {
+            var new_x = moveDirection.x * 0.3f;
+            var new_y = moveDirection.y * 0.3f;
+            var new_offset = new Vector2(new_x, new_y);
+            collider.offset = new_offset;
+        }
+        else
+        {
+            collider.offset = new Vector2(0f, 0f);
         }
 
         // 实现移动
@@ -135,7 +159,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // 更新移动目标
-        if (is_moving && !is_collision)
+        if (is_moving)
         {
             var new_moving_pos = GetStopMovingPos(transform.position, moveDirection);
             if (IsHaveCol(new_moving_pos))
@@ -149,17 +173,6 @@ public class PlayerMovement : MonoBehaviour
                 moveTime = 0;
             }
         }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //stopMovingPosition = lastStopMovingPosition;
-        Debug.Log("Updated stoppos to " + stopMovingPosition.ToString());
-        is_collision = true;
-    }
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        is_collision = true;
     }
     public void Move(InputAction.CallbackContext ctx)
     {

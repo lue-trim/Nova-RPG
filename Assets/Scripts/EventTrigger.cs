@@ -11,10 +11,22 @@ public class EventTrigger : MonoBehaviour
     [SerializeField]
     private string novaLabel;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        var lua_string = "jump_to " + novaLabel;
-        Nova.LuaRuntime.Instance.DoString(lua_string);
+
+        /*}
+        private void OnTriggerEnter2D(Collider2D collision)
+        {*/
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log(Time.realtimeSinceStartup.ToString() + ": 芝士幻月。");
+            //var lua_string = "jump_to " + novaLabel;
+            //Nova.LuaRuntime.Instance.DoString(lua_string);}
+        }
+        else
+        {
+            Debug.Log(Time.realtimeSinceStartup.ToString() + ": event triggered but not player");
+        }
     }
     void Start()
     {
