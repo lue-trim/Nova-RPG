@@ -9,6 +9,8 @@ public class NpcMovement : MonoBehaviour
     private float speed;
     [SerializeField]
     private Animator animator;
+    [SerializeField]
+    private Sprite[] animatedSprites;
 
     private bool is_moving = true;
     private Vector2 moveValue = new Vector2(0, 0);

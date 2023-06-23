@@ -7760,9 +7760,11 @@ GameObject:
   m_Component:
   - component: {fileID: 6455367926056193994}
   - component: {fileID: 969824612070152055}
+  - component: {fileID: 6970084920100920496}
   - component: {fileID: 7369030195029875569}
   - component: {fileID: 2606116814820125586}
   - component: {fileID: 6357327274030143134}
+  - component: {fileID: 7049882866524360806}
   m_Layer: 0
   m_Name: HuanYue
   m_TagString: Event
@@ -7797,6 +7799,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   novaLabel: HuanYue
+--- !u!114 &6970084920100920496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6248945037951364223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe543cd86edbbf49ab362f701c71fca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  animator: {fileID: 7049882866524360806}
+  animatedSprites:
+  - {fileID: 3427114271967980436, guid: 2d2e78901756bbf479f86b1b81da7fe0, type: 3}
+  - {fileID: 8158605244509288230, guid: 2d2e78901756bbf479f86b1b81da7fe0, type: 3}
+  - {fileID: 6184959299203262911, guid: 2d2e78901756bbf479f86b1b81da7fe0, type: 3}
+  - {fileID: 2495864320845663737, guid: 2d2e78901756bbf479f86b1b81da7fe0, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!212 &7369030195029875569
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7895,6 +7920,25 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!95 &7049882866524360806
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6248945037951364223}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fba38495de105f242b76130989a82d2b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8603529776646676747
 GameObject:
   m_ObjectHideFlags: 0

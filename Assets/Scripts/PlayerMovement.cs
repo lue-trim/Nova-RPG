@@ -6,18 +6,32 @@ using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // ----Editor
     [SerializeField] // 移动速度
     private float speed;
     [SerializeField] // 动画状态机
     private Animator animator;
+    [SerializeField] // Sprite renderer
+    private SpriteRenderer spriteRenderer;
+    [SerializeField] // 动画中使用的精灵
+    private Sprite[] animatedSprites;
+    [SerializeField] // 精灵id
+    private int spriteId;
     [SerializeField] // 碰撞体
     private BoxCollider2D collider;
-    // 当前地图
-    public GameObject tilemapsGameObject;
 
+    // ----地图类
+    // 当前地图
+    [SerializeField]
+    private GameObject tilemapsGameObject;
+    // 场景中所有的地图碰撞箱
     private TilemapCollider2D[] tilemap_cols;
+    // 当前地图中所有的事件点
     private GameObject[] events;
 
+    // ----移动相关的全局变量
+    // 移动任务
+    private List<Vector3> moveActions = new List<Vector3>();
     // 移动已持续时间
     private float moveTime = 0f;
     // 是否接收到移动信号
@@ -31,24 +45,30 @@ public class PlayerMovement : MonoBehaviour
     // 上一个应该停下来的位置
     private Vector3 lastStopMovingPosition = new Vector3();
 
+    // ----Public methods
+    public void SetMovePos(Vector3 pos)
+    {
+        moveActions.Add(pos);
+    }
+
+    // ----Private methods
     private Vector3 GetStopMovingPos(Vector3 current_pos, Vector2Int moveDirection)
     {
         float new_pos_x, new_pos_y;
 
-        // 横向
-        new_pos_x = Mathf.Round(current_pos.x + moveDirection.x);
+        /*// 横向
+        new_pos_x = Mathf.Floor(current_pos.x + moveDirection.x) + 0.5f;
 
         // 纵向
-        new_pos_y = Mathf.Round(current_pos.y + moveDirection.y);
-        /*//横向
+        new_pos_y = Mathf.Floor(current_pos.y + moveDirection.y) + 0.5f;*/
+        //横向
         if (moveDirection.x > 0)
         {
-            new_pos_x = Mathf.Ceil(current_pos.x + moveDirection.x) + 0.5f;
-            //Debug.Log(current_pos.ToString() + moveDirection.ToString());
+            new_pos_x = Mathf.Floor(current_pos.x + moveDirection.x);
         }
         else if (moveDirection.x < 0)
         {
-            new_pos_x = Mathf.Floor(current_pos.x + moveDirection.x) + 0.5f;
+            new_pos_x = Mathf.Ceil(current_pos.x + moveDirection.x);
         }
         else
         {
@@ -57,16 +77,16 @@ public class PlayerMovement : MonoBehaviour
         //纵向
         if (moveDirection.y > 0)
         {
-            new_pos_y = Mathf.Ceil(current_pos.y + moveDirection.y) + 0.5f;
+            new_pos_y = Mathf.Floor(current_pos.y + moveDirection.y);
         }
         else if (moveDirection.y < 0)
         {
-            new_pos_y = Mathf.Floor(current_pos.y + moveDirection.y) + 0.5f;
+            new_pos_y = Mathf.Ceil(current_pos.y + moveDirection.y);
         }
         else
         {
             new_pos_y = Mathf.Round(current_pos.y);
-        }*/
+        }
 
         var new_pos = new Vector3(new_pos_x, new_pos_y, current_pos.z);
         return new_pos;
@@ -122,9 +142,14 @@ public class PlayerMovement : MonoBehaviour
         stopMovingPosition = transform.position;
         tilemap_cols = tilemapsGameObject.GetComponentsInChildren<TilemapCollider2D>();
         events = GameObject.FindGameObjectsWithTag("Event");
+        tilemapsGameObject = GameObject.FindGameObjectsWithTag("Map")[0];
     }
     private void Update()
     {
+        // 设置动画
+        spriteRenderer.sprite = animatedSprites[spriteId];
+
+        // 检测前方是否存在碰撞区域
         if (IsHaveCol(stopMovingPosition))
         {
             stopMovingPosition = lastStopMovingPosition;
@@ -147,14 +172,26 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // 实现移动
-        //transform.position = MoveTowards();
         if (transform.position != stopMovingPosition)
         {
-            transform.position = Vector3.MoveTowards(transform.position, stopMovingPosition, speed * Time.deltaTime);
+            if (moveActions.Count == 0)
+            {
+                // 玩家控制
+                transform.position = Vector3.MoveTowards(transform.position, stopMovingPosition, speed * Time.deltaTime);
+            }
+            else
+            {
+                // 指定了移动的点（非玩家控制）
+                transform.position = Vector3.MoveTowards(transform.position, moveActions[0], speed * Time.deltaTime);
+            }
         }
         else if (is_moving)
         {
             lastStopMovingPosition = transform.position;
+            if (moveActions.Count > 0)
+            {
+                moveActions.RemoveAt(0);
+            }
             //Debug.Log("Updated lastpos to " + lastStopMovingPosition.ToString());
         }
 
@@ -177,7 +214,7 @@ public class PlayerMovement : MonoBehaviour
     public void Move(InputAction.CallbackContext ctx)
     {
         moveValue = ctx.ReadValue<Vector2>(); //input system的callback
-        var v = new Vector2(0f, 0f); //速度
+        //var v = new Vector2(0f, 0f); //速度
 
         // 检测移动方向
         moveDirection.x = moveValue.x > 0 ? 1 : (moveValue.x < 0 ? -1 : 0);

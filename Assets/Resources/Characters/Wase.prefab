@@ -100,8 +100,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   animator: {fileID: 3171543322755624997}
+  spriteRenderer: {fileID: 4229458076295282939}
+  animatedSprites:
+  - {fileID: 5264080763737454104, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: -6809564239642915110, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: -9114418884928959013, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: 1432989326086605378, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: 2379674509721345160, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: -2932130943088539484, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: 8544860830184986034, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: -495810660567337780, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: -7437767566268723114, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: 5696361349976031880, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: 4818893630582235575, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: -6270201612157378130, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: 6651645611679227678, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: -6386517316684635333, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: 4078013247568071550, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  - {fileID: 4839698146873301789, guid: f7829811bac035e4ab4cd853ce8db47a, type: 3}
+  spriteId: 0
   collider: {fileID: 8762096588620978245}
-  tilemapsGameObject: {fileID: 0}
 --- !u!114 &739840243617936987
 MonoBehaviour:
   m_ObjectHideFlags: 0
