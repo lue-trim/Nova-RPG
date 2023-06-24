@@ -1,0 +1,16 @@
+[
+    {"show":false, "display_name":"生命", "name":"hp", "type":"stats", "amount":100, "discription":""},
+    {"show":false, "display_name":"最高生命", "name":"max_hp", "type":"stats", "amount":100, "discription":""},
+    {"show":false, "display_name":"攻击", "name":"a", "type":"stats", "amount":1, "discription":""},
+    {"show":false, "display_name":"防御", "name":"d", "type":"stats", "amount":1, "discription":""},
+    {"show":false, "display_name":"魔防", "name":"s", "type":"stats", "amount":0, "discription":""},
+    {"show":false, "display_name":"金币", "name":"g", "type":"stats", "amount":0, "discription":""},
+    {"show":true, "display_name":"黄钥匙", "name":"yellow_key", "type":"key", "amount":0, "discription":""},
+    {"show":true, "display_name":"蓝钥匙", "name":"blue_key", "type":"key", "amount":0, "discription":""},
+    {"show":true, "display_name":"红钥匙", "name":"red_key", "type":"key", "amount":0, "discription":""},
+    {"show":true, "display_name":"绿钥匙", "name":"green_key", "type":"key", "amount":0, "discription":""},
+    {"show":false, "display_name":"铁门钥匙", "name":"iron_key", "type":"key", "amount":0, "discription":""},
+    {"show":false, "display_name":"传送器", "name":"tp", "type":"aux", "amount":0, "discription":""},
+    {"show":false, "display_name":"传导水晶", "name":"tpc", "type":"normal", "amount":0, "discription":""},
+    {"show":false, "display_name":"叽剑", "name":"wase_sword", "type":"weapon", "amount":0, "discription":""}
+]

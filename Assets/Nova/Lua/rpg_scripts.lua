@@ -1,19 +1,10 @@
---- 引用Minigame.lua中的内容
-function load_map(prefab_loader, map_name)
-    if not check_lazy_before('minigame') then
-        return
-    end
+-- 显示地图
+function show_map(name)
+    set_box('hide')
 
-    input_off()
-    __Nova.coroutineHelper:StartInterrupt()
-
-    show(prefab_loader, map_name)
-    wait_fence()
-    hide(prefab_loader)
-
-    __Nova.coroutineHelper:StopInterrupt()
-    input_on()
+    --input_off()
+    show(__Nova.mapPrefabLoader, name)
+    minigame(__Nova.emptyLoader, 'Empty')
+    set_box()
+    --input_on()
 end
-Nova.DialogueEntryPreprocessor.AddCheckpointNextPattern('minigame', 'ensure_ckpt_on_next_dialogue')
-
-

@@ -1,0 +1,92 @@
+@<|
+label('wase_home', '叽家（测试）')
+is_unlocked_start()
+|>
+<|
+anim:trans_fade(cam, function()
+        show(bg, 'corridor')
+    end, 2)
+set_box()
+|>
+这是一个测试脚本。
+
+@<| label('l_diff_choose', '叽家') |>
+<|
+play(bgm, '雅典娜蹦跶指南伴奏')
+|>
+请选择一个难度。
+@<|
+branch {
+    { dest = 'l_a', text = '早稻叽'},
+    { dest = 'l_b', text = '屁哥'},
+    { dest = 'l_c', text = '提尔锋'},
+}
+|>
+
+@<| label('l_a', '叽家') |>
+<|
+difficulty = '早稻叽'
+|>
+你选择了{{difficulty}}
+
+这个难度适合某纯白傻子。
+@<| jump_to('end_choose') |>
+
+@<| label('l_b', '叽家') |>
+<|
+difficulty = '屁哥'
+|>
+你选择了{{difficulty}}
+@<| jump_to('end_choose') |>
+
+@<| label('l_c', '叽家') |>
+<|
+difficulty = '提尔锋'
+|>
+你选择了{{difficulty}}
+@<| jump_to('end_choose') |>
+
+@<| label('end_choose', '叽家') |>
+确定吗？
+@<|
+branch {
+    { dest = 'l_diff_choose', text = '重新选一个'},
+    { dest = 'end_choose_real', text = '确定'},
+}
+|>
+
+@<| label('end_choose_real', '叽家') |>
+<|
+hide(bg)
+|>
+那么现在开始吧。
+
+[stage = before_checkpoint]<|
+show_map('叽家')
+|>
+@<| label('HuanYue', '叽家') |>
+芝士幻月。
+
+<|
+auto_voice_on('幻月姐姐',01)
+|>
+幻月姐姐：：主银，你醒啦
+
+幻月姐姐：：你今天怎么起这么晚啊
+
+幻月姐姐：：你说你肚子饿了
+
+幻月姐姐：：想吃啥
+
+幻月姐姐：：啥，你想吃馒头，你想让我给你蒸馒头，想什么呢
+
+幻月姐姐：：你瞅啥，你不服是吗
+
+幻月姐姐：：你……你不服你就吃我一拳
+
+幻月姐姐：：主银，你没事吧，打疼你了吧
+
+幻月姐姐：：主银，来摸摸头，摸摸摸摸，你的小女仆最喜欢你了
+
+幻月姐姐：：亲亲主银，摸摸摸
+@<| is_end() |>

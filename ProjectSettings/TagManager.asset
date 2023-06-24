@@ -13,6 +13,7 @@ TagManager:
   - Map
   - NPC
   - Event
+  - EmptyLoader
   layers:
   - Default
   - TransparentFX
